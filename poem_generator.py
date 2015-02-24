@@ -27,15 +27,12 @@ class FirstWord(object):
             w = FollowingWord(findWord, 1)
             self.following_word_list.append(w)
 
-    def print_out(self):
+    def print_word_list(self):
         print "%s %i -> " % (self.word, self.count),
         for following_word in self.following_word_list:
             print "%s %i -> " % (following_word.word, following_word.count),
 
-    def hello(self):
-        print "in here"
-
-def to_lower_remove_punct(word):
+def to_lowercase_remove_punct(word):
     word = word.lower()
     word = word.translate(string.maketrans("", ""), string.punctuation)
     return word
@@ -43,17 +40,15 @@ def to_lower_remove_punct(word):
 def hash_poem(fileobj, table):
     precedingWord = ""
     for line in fileobj:
-        for word in line.split():  # Split up the words
-            word = to_lower_remove_punct(word)  # Remove punctuation / make lowercase
+        for word in line.split():
+            word = to_lowercase_remove_punct(word)
             # If word is found in the dictionary, increment count
             if word in table:
-                # print "found %s" % word
                 table[word].count += 1
                 p = table[precedingWord]
                 p.process_following_word(word)
-                # If not found, add it to the dictionary
+            # If not found, add it to the dictionary
             else:
-                # print "adding %s" % word
                 table[word] = FirstWord(word, 1)
                 if precedingWord in table:
                     p = table[precedingWord]
@@ -75,6 +70,7 @@ def genereate_poem(generate_from, length, table):
             if add_up > rand_word_count:
                 generate_from = following_word.word
                 break
+    print "" # Line break in output
 
 # OPEN FILE - Geen Eggs and Ham, by Dr. Seuss
 poemFile = open('Green_Eggs_Ham.txt', 'r')
@@ -82,6 +78,12 @@ poemFile = open('Green_Eggs_Ham.txt', 'r')
 word_table = {}
 # Process the text file
 hash_poem(poemFile, word_table)
-# Generate from any word in the 
+# Generate from any word in the table
 genereate_poem('sam', 20, word_table)
+word_table.clear()
+
+# OPEN FILE - Annabel Lee, by Edgar Allen Poe
+poemFile = open('Annabel_Lee.txt', 'r')
+hash_poem(poemFile, word_table)
+genereate_poem('nevermore', 25, word_table)
 word_table.clear()
